@@ -28,6 +28,7 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
     }
     publicNetworkAccess: 'Enabled'
   }
+}
 
 //   resource deployment_ada 'deployments' = {
 //     name: 'ada-deployment'
