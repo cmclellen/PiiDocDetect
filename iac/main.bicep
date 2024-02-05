@@ -17,6 +17,8 @@ module ai './modules/ai.bicep' = {
     location: location
     resourceNameFormat: resourceNameFormat
     tags: tags
+    functionAppId: function.outputs.functionAppId
+    functionAppPrincipalId: function.outputs.functionAppPrincipalId
   }
 }
 

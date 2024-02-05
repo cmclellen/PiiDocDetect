@@ -94,3 +94,6 @@ module appSettingsModule 'appsettings.bicep' = {
     }
   }
 }
+
+output functionAppPrincipalId string = functionApp.identity.principalId
+output functionAppId string = functionApp.id

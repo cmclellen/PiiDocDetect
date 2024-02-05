@@ -1,6 +1,8 @@
 param location string
 param resourceNameFormat string
 param tags object
+param functionAppPrincipalId string
+param functionAppId string
 
 @allowed([
   'F0'
@@ -77,3 +79,22 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 //   }
 //   tags: tags
 // }
+
+var roleIds = [
+  'a97b65f3-24c7-4388-baec-2e87135dc908' // Cognitive Services User
+]
+
+resource roleDefinitions 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = [for roleId in roleIds: {
+  scope: subscription()
+  name: roleId
+}]
+
+resource roleAssignments 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for (roleId, ind) in roleIds: {
+  scope: cognitiveService
+  name: guid(cognitiveService.id, functionAppId, roleDefinitions[ind].id)
+  properties: {
+    roleDefinitionId: roleDefinitions[ind].id
+    principalId: functionAppPrincipalId
+    principalType: 'ServicePrincipal'
+  }
+}]
