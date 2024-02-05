@@ -1,45 +1,14 @@
 {
     "@odata.context": "https://srch-piiid-prd.search.windows.net/$metadata#skillsets/$entity",
-    "@odata.etag": "\"0x8DC262DA37C2F7F\"",
+    "@odata.etag": "\"0x8DC262FEE504B50\"",
     "name": "azureblob-skillset",
-    "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
+    "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
     "skills": [
       {
-        "@odata.type": "#Microsoft.Skills.Util.DocumentExtractionSkill",
+        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
         "name": "#1",
         "description": null,
-        "context": "/document",
-        "parsingMode": "default",
-        "dataToExtract": "contentAndMetadata",
-        "inputs": [
-          {
-            "name": "file_data",
-            "source": "/document/file_data"
-          }
-        ],
-        "outputs": [
-          {
-            "name": "content",
-            "targetName": "extracted_content"
-          },
-          {
-            "name": "normalized_images",
-            "targetName": "extracted_normalized_images"
-          }
-        ],
-        "configuration": {
-          "imageAction": "generateNormalizedImages",
-          "normalizedImageMaxWidth@odata.type": "#Int64",
-          "normalizedImageMaxWidth": 2000,
-          "normalizedImageMaxHeight@odata.type": "#Int64",
-          "normalizedImageMaxHeight": 2000
-        }
-      },
-      {
-        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
-        "name": "#2",
-        "description": null,
-        "context": "/document/extracted_content",
+        "context": "/document/normalized_images/*",
         "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
         "httpMethod": "POST",
         "timeout": "PT30S",
@@ -47,8 +16,8 @@
         "degreeOfParallelism": 1,
         "inputs": [
           {
-            "name": "text",
-            "source": "/document/extracted_content"
+            "name": "image",
+            "source": "/document/normalized_images/*"
           }
         ],
         "outputs": [

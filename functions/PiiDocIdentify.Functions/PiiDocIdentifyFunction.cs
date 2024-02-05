@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using System.Windows.Markup;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
@@ -23,7 +25,7 @@ namespace PiiDocIdentify.Functions
         }
 
         [Function(nameof(PiiDocIdentifyFunction))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             CancellationToken cancellationToken)
         {
 
@@ -144,7 +146,13 @@ namespace PiiDocIdentify.Functions
                     }
                 };
 
-            return new JsonResult(result);
+            var text = JsonSerializer.Serialize(result);
+
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "application/json");
+            await response.WriteStringAsync(text, cancellationToken);
+
+            return response;
         }
     }
 }
