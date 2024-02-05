@@ -3,27 +3,31 @@ param resourceNameFormat string
 param tags object
 
 @allowed([
+  'F0'
   'S0'
 ])
-param sku string = 'S0'
+param sku string = 'F0'
 
-// resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
-//   name: format(resourceNameFormat, 'oai', '')
-//   location: location
-//   tags: tags
-//   sku: {
-//     name: sku
-//   }
-//   kind: 'OpenAI'
-//   properties: {
-//     apiProperties: {
-//       statisticsEnabled: false
-//     }
-//     networkAcls: {
-//       defaultAction: 'Allow'
-//     }
-//     publicNetworkAccess: 'Enabled'
-//   }
+resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: format(resourceNameFormat, 'di', '')
+  location: location
+  tags: tags
+  sku: {
+    name: sku
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+  kind: 'FormRecognizer'
+  properties: {
+    apiProperties: {
+      statisticsEnabled: false
+    }
+    networkAcls: {
+      defaultAction: 'Allow'
+    }
+    publicNetworkAccess: 'Enabled'
+  }
 
 //   resource deployment_ada 'deployments' = {
 //     name: 'ada-deployment'
@@ -58,16 +62,16 @@ param sku string = 'S0'
 //   }
 // }
 
-// resource search 'Microsoft.Search/searchServices@2023-11-01' = {
-//   name: format(resourceNameFormat, 'srch', '')
-//   location: location
-//   sku: {
-//     name: 'basic'
-//   }
-//   properties: {
-//     replicaCount: 1
-//     partitionCount: 1
-//     hostingMode: 'default'
-//   }
-//   tags: tags
-// }
+resource search 'Microsoft.Search/searchServices@2023-11-01' = {
+  name: format(resourceNameFormat, 'srch', '')
+  location: location
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    replicaCount: 1
+    partitionCount: 1
+    hostingMode: 'default'
+  }
+  tags: tags
+}
