@@ -15,7 +15,7 @@ defaults:
 
 env:
   AZURE_FUNCTIONAPP_NAME: func-piiid-prd
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: PiiDocIdentify.Functions/published
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: PiiDocIdentify.Functions/published/
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: PiiDocIdentify.Functions
