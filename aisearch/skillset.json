@@ -1,0 +1,33 @@
+{
+    "name": "skillset1707118972768",
+    "description": "",
+    "skills": [
+          {
+              "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+              "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+              "httpHeaders": "",
+              "httpMethod": "",
+              "timeout": "PT30S",
+              "batchSize": 0,
+              "degreeOfParallelism": 0,
+              "name": "",
+              "description": "",
+              "context": "",
+              "inputs": [
+                  {
+                      "name": "",
+                      "source": ""
+                  }
+              ],
+              "outputs": [
+                  {
+                      "name": "",
+                      "targetName": ""
+                  }
+              ]
+          }
+      ],
+    "cognitiveServices": {
+      "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices"
+    }
+  }
