@@ -25,8 +25,12 @@ namespace PiiDocIdentify.Functions
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
             CancellationToken cancellationToken)
         {
-            var content = await new StreamReader(req.Body).ReadToEndAsync();
-            _logger.LogInformation("Content is {Content}", content);
+
+            using (var streamReader = new StreamReader(req.Body))
+            {
+                var content = await streamReader.ReadToEndAsync();
+                _logger.LogInformation("Content is {Content}", content);
+            }
 
             var idDocumentUri =
                 new Uri(
