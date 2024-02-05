@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Azure.Core;
+using Azure.Identity;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PiiDocIdentify.Functions.Extensions
 {
@@ -12,6 +16,31 @@ namespace PiiDocIdentify.Functions.Extensions
                 .ValidateDataAnnotations();
             //.ValidateOnStart();
             return services;
+        }
+
+        public static IServiceCollection ConfigureAzureClients(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddAzureClients(svc =>
+            {
+                svc.UseCredential(CreateTokenCredential());
+                configuration.GetValue<string>("AzureWebJobsStorage");
+
+                var documentAnalysisClient = configuration.GetSection("DocumentAnalysisClient");
+
+                var documentAnalysisClientSettings = documentAnalysisClient.Get<DocumentAnalysisClientSettings>();
+                svc.AddDocumentAnalysisClient(new Uri(documentAnalysisClientSettings.Endpoint));
+            });
+            return services;
+        }
+
+        private static TokenCredential CreateTokenCredential()
+        {
+            return new ChainedTokenCredential(
+#if DEBUG
+                new AzureCliCredential(),
+#endif
+                new ManagedIdentityCredential());
         }
     }
 }

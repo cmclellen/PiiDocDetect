@@ -1,0 +1,35 @@
+name: Seed data
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "seeddata/**"
+      - ".github/workflows/seeddata.workflow.yml"
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+defaults:
+  run:
+    working-directory: seeddata
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: seeddata
+          container_name: seeddata
+          connection_string: ${{ secrets.SEEDDATA_CONNECTION_STRING }}          
+          overwrite: "false"

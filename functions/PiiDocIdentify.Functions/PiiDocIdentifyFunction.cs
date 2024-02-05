@@ -1,9 +1,14 @@
+using System.Buffers.Text;
+using System.Net;
+using System.Text.Json;
+using System.Windows.Markup;
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using PiiDocIdentify.Functions.Dtos;
 
 namespace PiiDocIdentify.Functions
 {
@@ -22,27 +27,39 @@ namespace PiiDocIdentify.Functions
         }
 
         [Function(nameof(PiiDocIdentifyFunction))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             CancellationToken cancellationToken)
         {
+            JsonSerializerOptions opt = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
+            PiiDetectRequestDto piiDetectRequestDto;
             using (var streamReader = new StreamReader(req.Body))
             {
                 var content = await streamReader.ReadToEndAsync();
                 _logger.LogInformation("Content is {Content}", content);
+
+                piiDetectRequestDto = JsonSerializer.Deserialize<PiiDetectRequestDto>(content, opt)!;
             }
 
-            var idDocumentUri =
-                new Uri(
-                    "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/rest-api/identity_documents.png");
+            string imageData = piiDetectRequestDto.Values[0].Data.Image.Data;
+            var stream = new MemoryStream(Convert.FromBase64String(imageData));
 
-            var operation = await _documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed,
-                "prebuilt-idDocument", idDocumentUri, cancellationToken: cancellationToken);
+            var operation = await _documentAnalysisClient.AnalyzeDocumentAsync(WaitUntil.Completed,
+                "prebuilt-idDocument", stream, cancellationToken: cancellationToken);
+
+            //var idDocumentUri =
+            //    new Uri(
+            //        "https://raw.githubusercontent.com/Azure-Samples/cognitive-services-REST-api-samples/master/curl/form-recognizer/rest-api/identity_documents.png");
+
+            //var operation = await _documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed,
+            //    "prebuilt-idDocument", idDocumentUri, cancellationToken: cancellationToken);
 
             var identityDocuments = operation.Value;
 
             var identityDocument = identityDocuments.Documents.Single();
 
+            _logger.LogInformation("{DocumentType} found.", identityDocument.DocumentType);
+            
             if (identityDocument.Fields.TryGetValue("Address", out var addressField))
             {
                 if (addressField.FieldType == DocumentFieldType.String)
@@ -127,7 +144,29 @@ namespace PiiDocIdentify.Functions
                 }
             }
 
-            return new OkObjectResult("Welcome to Azure Functions!");
+            var result =
+                new
+                {
+                    Values = new[]
+                    {
+                        new
+                        {
+                            RecordId = 0,
+                            Data = new
+                            {
+                                Name = "Craig"
+                            }
+                        }
+                    }
+                };
+
+            var text = JsonSerializer.Serialize(result, opt);
+
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "application/json");
+            await response.WriteStringAsync(text, cancellationToken);
+
+            return response;
         }
     }
 }

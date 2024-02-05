@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/CreateInfra
     paths:
       - "iac/**"
       - ".github/workflows/iac.workflow.yml"

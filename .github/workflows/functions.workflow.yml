@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/CreateInfra
     paths:
       - "functions/**"
       - ".github/workflows/functions.workflow.yml"
