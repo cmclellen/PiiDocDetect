@@ -3,9 +3,6 @@ using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 
 namespace PiiDocIdentify.Functions.Extensions
 {
@@ -18,16 +15,6 @@ namespace PiiDocIdentify.Functions.Extensions
                 .BindConfiguration(configurationSection)
                 .ValidateDataAnnotations();
             //.ValidateOnStart();
-            return services;
-        }
-
-        public static IServiceCollection ConfigureSerilog(this IServiceCollection services, IHostEnvironment env)
-        {
-            var logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-                .CreateLogger();
-            services.AddLogging(logging => logging.AddSerilog(logger, true));
             return services;
         }
 
