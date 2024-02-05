@@ -6,15 +6,15 @@ on:
       - main
       - AddAiSearch
     paths:
-      - "seed/**"
-      - ".github/workflows/seed.workflow.yml"
+      - "seeddata/**"
+      - ".github/workflows/seeddata.workflow.yml"
 
 env:
   ACTIONS_RUNNER_DEBUG: true
 
 defaults:
   run:
-    working-directory: seed
+    working-directory: seeddata
 
 jobs:
   build-and-deploy:
@@ -32,6 +32,5 @@ jobs:
         with:
           source_dir: seeddata
           container_name: seeddata
-          connection_string: ${{ secrets.SEEDDATA_CONNECTION_STRING }}
-          extra_args: "--pattern *.*"
+          connection_string: ${{ secrets.SEEDDATA_CONNECTION_STRING }}          
           overwrite: "false"
