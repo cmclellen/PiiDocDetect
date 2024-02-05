@@ -144,7 +144,7 @@ namespace PiiDocIdentify.Functions
                     }
                 };
 
-            return new OkObjectResult(result);
+            return new JsonResult(result);
         }
     }
 }
