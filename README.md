@@ -8,5 +8,5 @@ az ad sp create-for-rbac --json-auth --name PiiDocDetect --role owner --scopes /
 ```
 * Query logs
 ```
-union traces, exceptions | where timestamp > ago(10min) and cloud_RoleName == "func-piiid-prd"
+union traces, exceptions | where timestamp > ago(5min) and cloud_RoleName == "func-piiid-prd"
 ```

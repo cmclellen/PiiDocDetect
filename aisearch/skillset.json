@@ -1,33 +1,36 @@
 {
-    "name": "skillset1707118972768",
-    "description": "",
-    "skills": [
-          {
-              "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
-              "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
-              "httpHeaders": "",
-              "httpMethod": "",
-              "timeout": "PT30S",
-              "batchSize": 0,
-              "degreeOfParallelism": 0,
-              "name": "",
-              "description": "",
-              "context": "",
-              "inputs": [
-                  {
-                      "name": "",
-                      "source": ""
-                  }
-              ],
-              "outputs": [
-                  {
-                      "name": "",
-                      "targetName": ""
-                  }
-              ]
-          }
+  "name": "skillset-pii-doc-detect",
+  "description": "",
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+      "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+      "httpMethod": "POST",
+      "timeout": "PT30S",
+      "batchSize": 1,
+      "degreeOfParallelism": 1,
+      "name": "#1",
+      "description": null,
+      "context": "/document/content",
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/content"
+        }
       ],
-    "cognitiveServices": {
-      "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices"
+      "outputs": [
+        {
+          "name": "piiEntities",
+          "targetName": "pii_entities"
+        },
+        {
+          "name": "maskedText",
+          "targetName": "masked_text"
+        }
+      ]
     }
+  ],
+  "cognitiveServices": {
+    "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices"
   }
+}
