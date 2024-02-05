@@ -1,0 +1,50 @@
+name: IAC CI & CD
+
+on:
+  push:
+    branches:
+      - main
+      - feature/CreateInfra
+    paths:
+      - "iac/**"
+      - ".github/workflows/iac.workflow.yml"
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+defaults:
+  run:
+    working-directory: iac
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Generate parameters file
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.55.0
+          inlineScript: |
+            az bicep install
+            az bicep version
+            az bicep build-params --file iac/prd.bicepparam
+
+      - name: Deploy
+        uses: azure/CLI@v1
+        env:
+          RG_NAME: "pii-doc-detect"
+          LOCATION: "australiaeast"
+          ENVIRONMENT: prd
+        with:
+          azcliversion: 2.55.0
+          inlineScript: |
+            az group create --name ${{env.RG_NAME}} --location ${{env.LOCATION}}
+            az deployment group create --name fmsp${{env.ENVIRONMENT}} --resource-group ${{env.RG_NAME}} --template-file iac/main.bicep --parameters iac/${{env.ENVIRONMENT}}.json
