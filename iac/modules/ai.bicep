@@ -33,52 +33,19 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   }
 }
 
-//   resource deployment_ada 'deployments' = {
-//     name: 'ada-deployment'
-//     sku: {
-//       name: 'Standard'
-//       capacity: 1
-//     }
-//     properties: {
-//       model: {
-//         format: 'OpenAI'
-//         name: 'text-embedding-ada-002'
-//         version: '2'
-//       }
-//     }
-//     tags: tags
-//   }
-
-//   resource deployment_gpt35 'deployments' = {
-//     name: 'gpt35-deployment'
-//     sku: {
-//       name: 'Standard'
-//       capacity: 1
-//     }
-//     properties: {
-//       model: {
-//         format: 'OpenAI'
-//         name: 'gpt-35-turbo'
-//         version: '1106'
-//       }
-//     }
-//     tags: tags
-//   }
-// }
-
-// resource search 'Microsoft.Search/searchServices@2023-11-01' = {
-//   name: format(resourceNameFormat, 'srch', '')
-//   location: location
-//   sku: {
-//     name: 'basic'
-//   }
-//   properties: {
-//     replicaCount: 1
-//     partitionCount: 1
-//     hostingMode: 'default'
-//   }
-//   tags: tags
-// }
+resource search 'Microsoft.Search/searchServices@2023-11-01' = {
+  name: format(resourceNameFormat, 'srch', '')
+  location: location
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    replicaCount: 1
+    partitionCount: 1
+    hostingMode: 'default'
+  }
+  tags: tags
+}
 
 var roleIds = [
   'a97b65f3-24c7-4388-baec-2e87135dc908' // Cognitive Services User
