@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/CreateInfra
+      - AddAiSearch
     paths:
       - "functions/**"
       - ".github/workflows/functions.workflow.yml"
