@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - AddAiSearch
     paths:
       - "seeddata/**"
       - ".github/workflows/seeddata.workflow.yml"

@@ -1,6 +1,6 @@
 {
     "@odata.context": "https://srch-piiid-prd.search.windows.net/$metadata#skillsets/$entity",
-    "@odata.etag": "\"0x8DC262FEE504B50\"",
+    "@odata.etag": "\"0x8DC2630EFF7CB39\"",
     "name": "azureblob-skillset",
     "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
     "skills": [
