@@ -1,36 +1,67 @@
 {
-  "name": "skillset-pii-doc-detect",
-  "description": "",
-  "skills": [
-    {
-      "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
-      "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
-      "httpMethod": "POST",
-      "timeout": "PT30S",
-      "batchSize": 1,
-      "degreeOfParallelism": 1,
-      "name": "#1",
-      "description": null,
-      "context": "/document/content",
-      "inputs": [
-        {
-          "name": "text",
-          "source": "/document/content"
+    "@odata.context": "https://srch-piiid-prd.search.windows.net/$metadata#skillsets/$entity",
+    "@odata.etag": "\"0x8DC262DA37C2F7F\"",
+    "name": "azureblob-skillset",
+    "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
+    "skills": [
+      {
+        "@odata.type": "#Microsoft.Skills.Util.DocumentExtractionSkill",
+        "name": "#1",
+        "description": null,
+        "context": "/document",
+        "parsingMode": "default",
+        "dataToExtract": "contentAndMetadata",
+        "inputs": [
+          {
+            "name": "file_data",
+            "source": "/document/file_data"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "content",
+            "targetName": "extracted_content"
+          },
+          {
+            "name": "normalized_images",
+            "targetName": "extracted_normalized_images"
+          }
+        ],
+        "configuration": {
+          "imageAction": "generateNormalizedImages",
+          "normalizedImageMaxWidth@odata.type": "#Int64",
+          "normalizedImageMaxWidth": 2000,
+          "normalizedImageMaxHeight@odata.type": "#Int64",
+          "normalizedImageMaxHeight": 2000
         }
-      ],
-      "outputs": [
-        {
-          "name": "piiEntities",
-          "targetName": "pii_entities"
-        },
-        {
-          "name": "maskedText",
-          "targetName": "masked_text"
-        }
-      ]
-    }
-  ],
-  "cognitiveServices": {
-    "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices"
+      },
+      {
+        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+        "name": "#2",
+        "description": null,
+        "context": "/document/extracted_content",
+        "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+        "httpMethod": "POST",
+        "timeout": "PT30S",
+        "batchSize": 1,
+        "degreeOfParallelism": 1,
+        "inputs": [
+          {
+            "name": "text",
+            "source": "/document/extracted_content"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "name",
+            "targetName": "name"
+          }
+        ],
+        "httpHeaders": {}
+      }
+    ],
+    "cognitiveServices": null,
+    "knowledgeStore": null,
+    "indexProjections": null,
+    "encryptionKey": null
   }
-}
