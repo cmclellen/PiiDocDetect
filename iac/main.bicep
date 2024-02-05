@@ -20,8 +20,20 @@ module ai './modules/ai.bicep' = {
   }
 }
 
-module storage './modules/storage.bicep' = {
-  name: 'storage'
+module function './modules/function.bicep' = {
+  name: 'function'
+  params: {
+    location: location
+    resourceNameFormat: resourceNameFormat
+    tags: tags
+    lawId: monitoring.outputs.lawId
+    appInsightsConnectionString: monitoring.outputs.appInsightsConnectionString
+    appInsightsInstrumentationKey: monitoring.outputs.appInsightsInstrumentationKey
+  }
+}
+
+module monitoring './modules/monitoring.bicep' = {
+  name: 'monitoring'
   params: {
     location: location
     resourceNameFormat: resourceNameFormat
