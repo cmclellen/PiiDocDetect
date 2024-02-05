@@ -1,8 +1,8 @@
 using Azure;
 using Azure.AI.FormRecognizer.DocumentAnalysis;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
 namespace PiiDocIdentify.Functions
@@ -22,7 +22,7 @@ namespace PiiDocIdentify.Functions
         }
 
         [Function(nameof(PiiDocIdentifyFunction))]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequest req,
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             CancellationToken cancellationToken)
         {
 
