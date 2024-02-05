@@ -76,7 +76,7 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   }
 }
 
-module appSettingsModule 'appSettings.bicep' = {
+module appSettingsModule 'appsettings.bicep' = {
   name: '${functionApp.name}-appSettings'
   params: {
     functionApp: functionApp.name
