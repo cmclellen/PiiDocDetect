@@ -11,7 +11,7 @@ var host = new HostBuilder()
         var configuration = ctx.Configuration;
         services
             .RegisterOption<DocumentAnalysisClientSettings>(DocumentAnalysisClientSettings.ConfigurationSection)
-            .ConfigureSerilog()
+            .ConfigureSerilog(ctx.HostingEnvironment)
             .ConfigureAzureClients(ctx.Configuration);
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
