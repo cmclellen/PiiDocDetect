@@ -30,6 +30,7 @@ namespace PiiDocIdentify.Functions
         public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             CancellationToken cancellationToken)
         {
+            JsonSerializerOptions opt = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
             PiiDetectRequestDto piiDetectRequestDto;
             using (var streamReader = new StreamReader(req.Body))
@@ -37,7 +38,7 @@ namespace PiiDocIdentify.Functions
                 var content = await streamReader.ReadToEndAsync();
                 _logger.LogInformation("Content is {Content}", content);
 
-                piiDetectRequestDto = JsonSerializer.Deserialize<PiiDetectRequestDto>(content)!;
+                piiDetectRequestDto = JsonSerializer.Deserialize<PiiDetectRequestDto>(content, opt)!;
             }
 
             string imageData = piiDetectRequestDto.Values[0].Data.Image.Data;
@@ -159,7 +160,7 @@ namespace PiiDocIdentify.Functions
                     }
                 };
 
-            var text = JsonSerializer.Serialize(result);
+            var text = JsonSerializer.Serialize(result, opt);
 
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "application/json");
