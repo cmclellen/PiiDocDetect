@@ -6,7 +6,7 @@
 1. [Useful Links](#useful-links)
 
 ### Overview
-
+dd
 The solution allows for images (even contained within zip files) to be imported into an Azure AI Search index, while having a custom skill analyze the image to determine whether the image is an ID document, etc., and if so, reads details from the document and populates the index with the enhanced information. 
 
 I found the standard PII pre-built skill wasn't picking up the detail I was after, and hence why I opted to try using Azure Document Intelligence to get to that additional info I was after.
