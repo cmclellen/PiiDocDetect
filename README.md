@@ -16,7 +16,7 @@ This is a possible option for detecting PII data within a dataset (in this case,
 ![Architecture](assets/images/architecture.jpeg)
 
 ### GitHub workflow setup
-* Create the Service Principal that GiyHub will use to provision resources within Azure using Bicep
+* Create the Service Principal that the GitHub build agent will use to provision resources within Azure using Bicep
 ```
 az login --tenant dca5775e-99b4-497c-90c1-c8e73396999e
 az ad sp create-for-rbac --json-auth --name PiiDocDetect --role owner --scopes /subscriptions/761399c5-3790-4380-b6a8-a11554fafa7a
@@ -29,5 +29,5 @@ union traces, exceptions | where timestamp > ago(5min) and cloud_RoleName == "fu
 ```
 
 ### Useful Links
-1. [How to create index, skillset, indexer and datasource](https://learn.microsoft.com/en-us/azure/search/cognitive-search-tutorial-blob)
+1. [How to create index, skillset, indexer and datasource in Azure AI Search](https://learn.microsoft.com/en-us/azure/search/cognitive-search-tutorial-blob)
 

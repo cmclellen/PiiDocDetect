@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/FixIndex11
     paths:
       - "aisearch/**"
       - ".github/workflows/aisearch.workflow.yml"
