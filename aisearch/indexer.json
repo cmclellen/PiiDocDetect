@@ -1,0 +1,33 @@
+{
+  "name": "my-file-indexer",
+  "dataSourceName": "azureblob",
+  "targetIndexName": "my-search-index",
+  "skillsetName": "azureblob-skillset",
+  "parameters": {
+    "batchSize": null,
+    "maxFailedItems": null,
+    "maxFailedItemsPerBatch": null,
+    "base64EncodeKeys": null,
+    "configuration": {
+      "dataToExtract": "contentAndMetadata",
+      "parsingMode": "default",
+      "imageAction": "generateNormalizedImages"
+    }
+  },
+  "schedule": {},
+  "fieldMappings": [],
+  "outputFieldMappings": [
+    {
+      "sourceFieldName": "/document/normalized_images/*/firstName",
+      "targetFieldName": "firstName"
+    },
+    {
+      "sourceFieldName": "/document/normalized_images/*/lastName",
+      "targetFieldName": "lastName"
+    },
+    {
+      "sourceFieldName": "/document/normalized_images/*/documentType",
+      "targetFieldName": "documentType"
+    }
+  ]
+}

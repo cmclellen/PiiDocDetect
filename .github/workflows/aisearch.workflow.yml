@@ -1,0 +1,48 @@
+name: Configure AI Search
+
+on:
+  push:
+    branches:
+      - main
+      - feature/FixIndex11
+    paths:
+      - "aisearch/**"
+      - ".github/workflows/aisearch.workflow.yml"
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+
+defaults:
+  run:
+    working-directory: aisearch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy AI Search Datasource
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://srch-piiid-prd.search.windows.net/datasources?api-version=2020-06-30-Preview'
+          method: 'POST'
+          customHeaders: '{"Content-Type": "application/json", "api-key": ${{ secrets.AI_SEARCH_API_KEY }}}'
+          data: |
+            '{ 
+              "name": "azureblob", 
+              "description": "Demo files to demonstrate Azure AI Search capabilities.", 
+              "type": "azureblob", 
+              "credentials": { 
+                  "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" 
+              }, 
+              "container": { 
+                  "name": "seeddata" 
+              } 
+            }'

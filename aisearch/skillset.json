@@ -1,36 +1,38 @@
 {
-    "@odata.context": "https://srch-piiid-prd.search.windows.net/$metadata#skillsets/$entity",
-    "@odata.etag": "\"0x8DC2630EFF7CB39\"",
-    "name": "azureblob-skillset",
-    "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
-    "skills": [
-      {
-        "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
-        "name": "#1",
-        "description": null,
-        "context": "/document/normalized_images/*",
-        "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
-        "httpMethod": "POST",
-        "timeout": "PT30S",
-        "batchSize": 1,
-        "degreeOfParallelism": 1,
-        "inputs": [
-          {
-            "name": "image",
-            "source": "/document/normalized_images/*"
-          }
-        ],
-        "outputs": [
-          {
-            "name": "name",
-            "targetName": "name"
-          }
-        ],
-        "httpHeaders": {}
-      }
-    ],
-    "cognitiveServices": null,
-    "knowledgeStore": null,
-    "indexProjections": null,
-    "encryptionKey": null
-  }
+  "name": "azureblob-skillset",
+  "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+      "name": "#1",
+      "description": null,
+      "context": "/document/normalized_images/*",
+      "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+      "httpMethod": "POST",
+      "timeout": "PT30S",
+      "batchSize": 1,
+      "degreeOfParallelism": 1,
+      "inputs": [
+        {
+          "name": "image",
+          "source": "/document/normalized_images/*"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "firstName",
+          "targetName": "firstName"
+        },
+        {
+          "name": "lastName",
+          "targetName": "lastName"
+        },
+        {
+          "name": "documentType",
+          "targetName": "documentType"
+        }
+      ],
+      "httpHeaders": {}
+    }
+  ]
+}
