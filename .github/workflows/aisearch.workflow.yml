@@ -1,0 +1,161 @@
+name: Configure AI Search
+
+on:
+  push:
+    branches:
+      - main
+      - feature/FixIndex11
+    paths:
+      - "aisearch/**"
+      - ".github/workflows/aisearch.workflow.yml"
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  API_BASE_URL: https://srch-piiid-prd.search.windows.net/
+  API_VERSION: 2020-06-30-Preview
+  API_HEADERS: |
+    { 
+      "Content-Type": "application/json", 
+      "api-key": "${{ secrets.AI_SEARCH_API_KEY }}"
+    }
+
+defaults:
+  run:
+    working-directory: aisearch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy AI Search Datasource
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}datasources?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            { 
+              "name": "piiid-datasource", 
+              "description": "Demo files to demonstrate Azure AI Search capabilities.", 
+              "type": "azureblob", 
+              "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, 
+              "container": { "name": "seeddata" } 
+            }
+        
+      - name: Deploy AI Search Skillset
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}skillsets?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            {
+              "name": "piiid-skillset",
+              "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
+              "skills": [
+                {
+                  "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+                  "name": "#1",
+                  "description": null,
+                  "context": "/document/normalized_images/*",
+                  "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+                  "httpMethod": "POST",
+                  "timeout": "PT30S",
+                  "batchSize": 1,
+                  "degreeOfParallelism": 1,
+                  "inputs": [
+                    {
+                      "name": "image",
+                      "source": "/document/normalized_images/*"
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "firstName",
+                      "targetName": "firstName"
+                    },
+                    {
+                      "name": "lastName",
+                      "targetName": "lastName"
+                    },
+                    {
+                      "name": "documentType",
+                      "targetName": "documentType"
+                    }
+                  ],
+                  "httpHeaders": {}
+                }
+              ]
+            }
+
+      - name: Deploy AI Search Index
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}indexes?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            {
+              "name" : "piiid-index",
+              "fields": [
+                  { "name": "ID", "type": "Edm.String", "key": true, "searchable": false },
+                  { "name": "content", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "documentType", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "firstName", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "lastName", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "metadata_storage_name", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true  },
+                  { "name": "metadata_storage_path", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true },
+                  { "name": "metadata_storage_size", "type": "Edm.Int64", "searchable": false, "filterable": true, "sortable": true  },
+                  { "name": "metadata_storage_content_type", "type": "Edm.String", "searchable": true, "filterable": true, "sortable": true }        
+              ]
+            }
+
+      - name: Deploy AI Search Indexer
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}indexers?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          timeout: 30000
+          data: |
+            {
+              "name": "piiid-indexer",
+              "dataSourceName": "piiid-datasource",
+              "targetIndexName": "piiid-index",
+              "skillsetName": "piiid-skillset",
+              "parameters": {
+                  "batchSize": null,
+                  "maxFailedItems": null,
+                  "maxFailedItemsPerBatch": null,
+                  "base64EncodeKeys": null,
+                  "configuration": {
+                      "dataToExtract": "contentAndMetadata",
+                      "parsingMode": "default",
+                      "imageAction": "generateNormalizedImages"
+                  }
+              },
+              "schedule": {},
+              "fieldMappings": [],
+              "outputFieldMappings": [
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/firstName",
+                      "targetFieldName": "firstName"
+                  },
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/lastName",
+                      "targetFieldName": "lastName"
+                  },
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/documentType",
+                      "targetFieldName": "documentType"
+                  }
+              ]
+            }
