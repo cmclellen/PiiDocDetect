@@ -95,3 +95,66 @@ jobs:
                 }
               ]
             }
+
+      - name: Deploy AI Search Index
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}indexes?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            {
+              "name" : "piiid-index",
+              "fields": [
+                  { "name": "ID", "type": "Edm.String", "key": true, "searchable": false },
+                  { "name": "content", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "documentType", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "firstName", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "lastName", "type": "Edm.String", "searchable": true, "filterable": false },
+                  { "name": "metadata_storage_name", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true  },
+                  { "name": "metadata_storage_path", "type": "Edm.String", "searchable": false, "filterable": true, "sortable": true },
+                  { "name": "metadata_storage_size", "type": "Edm.Int64", "searchable": false, "filterable": true, "sortable": true  },
+                  { "name": "metadata_storage_content_type", "type": "Edm.String", "searchable": true, "filterable": true, "sortable": true }        
+              ]
+            }
+
+      - name: Deploy AI Search Indexer
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}indexers?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            {
+              "name": "piiid-indexer",
+              "dataSourceName": "piiid-datasource",
+              "targetIndexName": "piiid-index",
+              "skillsetName": "piiid-skillset",
+              "parameters": {
+                  "batchSize": null,
+                  "maxFailedItems": null,
+                  "maxFailedItemsPerBatch": null,
+                  "base64EncodeKeys": null,
+                  "configuration": {
+                      "dataToExtract": "contentAndMetadata",
+                      "parsingMode": "default",
+                      "imageAction": "generateNormalizedImages"
+                  }
+              },
+              "schedule": {},
+              "fieldMappings": [],
+              "outputFieldMappings": [
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/firstName",
+                      "targetFieldName": "firstName"
+                  },
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/lastName",
+                      "targetFieldName": "lastName"
+                  },
+                  {
+                      "sourceFieldName": "/document/normalized_images/*/documentType",
+                      "targetFieldName": "documentType"
+                  }
+              ]
+          }
