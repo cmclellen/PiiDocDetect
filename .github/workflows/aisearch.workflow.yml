@@ -34,15 +34,4 @@ jobs:
           url: 'https://srch-piiid-prd.search.windows.net/datasources?api-version=2020-06-30-Preview'
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json", "api-key": "${{ secrets.AI_SEARCH_API_KEY }}"}'
-          data: |
-            { \
-              "name": "azureblob", \
-              "description": "Demo files to demonstrate Azure AI Search capabilities.", \
-              "type": "azureblob", \
-              "credentials": { \
-                  "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" \
-              }, \
-              "container": { \
-                  "name": "seeddata" \
-              } \
-            }
+          data: '{ "name": "azureblob", "description": "Demo files to demonstrate Azure AI Search capabilities.", "type": "azureblob", "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, "container": { "name": "seeddata" } }'
