@@ -124,6 +124,7 @@ jobs:
           url: '${{env.API_BASE_URL}}indexers?api-version=${{ env.API_VERSION}}'
           method: 'POST'
           customHeaders: ${{env.API_HEADERS}}
+          timeout: 30000
           data: |
             {
               "name": "piiid-indexer",
