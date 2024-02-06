@@ -37,4 +37,8 @@ jobs:
           data: |
             { 
               "name": "piiid-datasource", 
-              "description": "Demo files to demonstrate Azure AI Search capabilities.", "type": "azureblob", "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, "container": { "name": "seeddata" } }
+              "description": "Demo files to demonstrate Azure AI Search capabilities.", 
+              "type": "azureblob", 
+              "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, 
+              "container": { "name": "seeddata" } 
+            }
