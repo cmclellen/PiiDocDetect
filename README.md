@@ -1,5 +1,9 @@
 # PII Document Detection
 
+### AI Search
+#### How to create index, skillset, indexer and datasource
+https://learn.microsoft.com/en-us/azure/search/cognitive-search-tutorial-blob
+
 ### Develop onboarding
 * Create the Service Principal
 ```
