@@ -49,3 +49,49 @@ jobs:
               "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, 
               "container": { "name": "seeddata" } 
             }
+        
+      - name: Deploy AI Search Skillset
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: '${{env.API_BASE_URL}}skillsets?api-version=${{ env.API_VERSION}}'
+          method: 'POST'
+          customHeaders: ${{env.API_HEADERS}}
+          data: |
+            {
+              "name": "azureblob-skillset",
+              "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
+              "skills": [
+                {
+                  "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+                  "name": "#1",
+                  "description": null,
+                  "context": "/document/normalized_images/*",
+                  "uri": "https://func-piiid-prd.azurewebsites.net/api/piidocidentifyfunction",
+                  "httpMethod": "POST",
+                  "timeout": "PT30S",
+                  "batchSize": 1,
+                  "degreeOfParallelism": 1,
+                  "inputs": [
+                    {
+                      "name": "image",
+                      "source": "/document/normalized_images/*"
+                    }
+                  ],
+                  "outputs": [
+                    {
+                      "name": "firstName",
+                      "targetName": "firstName"
+                    },
+                    {
+                      "name": "lastName",
+                      "targetName": "lastName"
+                    },
+                    {
+                      "name": "documentType",
+                      "targetName": "documentType"
+                    }
+                  ],
+                  "httpHeaders": {}
+                }
+              ]
+            }
