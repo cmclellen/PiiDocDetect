@@ -58,7 +58,7 @@ jobs:
           customHeaders: ${{env.API_HEADERS}}
           data: |
             {
-              "name": "azureblob-skillset",
+              "name": "piiid-skillset",
               "description": "Skillset created from the portal. skillsetName: azureblob-skillset; contentField: merged_content; enrichmentGranularity: document; knowledgeStoreStorageAccount: ;",
               "skills": [
                 {
