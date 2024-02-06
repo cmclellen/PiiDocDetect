@@ -154,7 +154,8 @@ namespace PiiDocIdentify.Functions
                             RecordId = 0,
                             Data = new
                             {
-                                Name = "Craig"
+                                Name = "Craig",
+                                Age = "40"
                             }
                         }
                     }
