@@ -11,6 +11,8 @@ on:
 
 env:
   ACTIONS_RUNNER_DEBUG: true
+  API_BASE_URL: https://srch-piiid-prd.search.windows.net/
+  API_VERSION: 2020-06-30-Preview
 
 defaults:
   run:
@@ -31,7 +33,7 @@ jobs:
       - name: Deploy AI Search Datasource
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://srch-piiid-prd.search.windows.net/datasources?api-version=2020-06-30-Preview'
+          url: '${{env.API_BASE_URL}}datasources?api-version=${{ env.API_VERSION}}'
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json", "api-key": "${{ secrets.AI_SEARCH_API_KEY }}"}'
           data: |
