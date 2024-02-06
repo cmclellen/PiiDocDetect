@@ -29,5 +29,5 @@ union traces, exceptions | where timestamp > ago(5min) and cloud_RoleName == "fu
 ```
 
 ### Useful Links
-1. [How to create index, skillset, indexer and datasource](https://learn.microsoft.com/en-us/azure/search/cognitive-search-tutorial-blob)
+1. [How to create index, skillset, indexer and datasource in Azure AI Search](https://learn.microsoft.com/en-us/azure/search/cognitive-search-tutorial-blob)
 
