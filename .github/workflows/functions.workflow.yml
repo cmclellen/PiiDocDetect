@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/FixIndex11
     paths:
       - "functions/**"
       - ".github/workflows/functions.workflow.yml"
