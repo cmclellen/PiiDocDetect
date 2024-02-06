@@ -35,4 +35,6 @@ jobs:
           method: 'POST'
           customHeaders: '{"Content-Type": "application/json", "api-key": "${{ secrets.AI_SEARCH_API_KEY }}"}'
           data: |
-            { "name": "piiid-datasource", "description": "Demo files to demonstrate Azure AI Search capabilities.", "type": "azureblob", "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, "container": { "name": "seeddata" } }
+            { 
+              "name": "piiid-datasource", 
+              "description": "Demo files to demonstrate Azure AI Search capabilities.", "type": "azureblob", "credentials": { "connectionString": "${{ secrets.SEEDDATA_CONNECTION_STRING }}" }, "container": { "name": "seeddata" } }
